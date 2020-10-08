@@ -4,6 +4,7 @@ from utils.validators_user import (
     validate_type, validate_situation, validate_fields
 )
 from bson import ObjectId
+import bcrypt
 
 
 def save_user_request(request):
@@ -28,6 +29,11 @@ def save_user_request(request):
         return {"erro": "Não é possível enviar situação vazio"}, 400
 
     db = MongoDB()
+
+    keyWord = request['password'].encode("utf-8")
+    hashed = bcrypt.hashpw(keyWord, bcrypt.gensalt())
+    request['password'] = hashed
+
     connection_is_alive = db.test_connection()
     if connection_is_alive:
         if(db.insert_one(request)):
