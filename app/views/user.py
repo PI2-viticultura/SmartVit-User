@@ -16,3 +16,8 @@ def user():
 def user_put(id):
     if request.method == "PUT":
         return controller.update_user_request(id, request.json)
+
+@app.route("/user", methods=["GET"])
+def user_get():
+    if request.method == "GET":
+        return controller.get_users_request()

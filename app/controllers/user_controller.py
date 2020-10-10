@@ -3,7 +3,8 @@ from utils.validators_user import (
     validate_name, validate_cpf, validate_email, validate_password,
     validate_type, validate_situation, validate_fields
 )
-from bson import ObjectId
+from bson import ObjectId, json_util
+import json
 import bcrypt
 
 
@@ -74,6 +75,20 @@ def update_user_request(id, request):
         if(db.update_one(user_id, request)):
             if(db.update_one(user_id, request, 'user')):
                 return {"message": "success"}, 200
+
+    db.close_connection()
+
+    return {'error': 'Something gone wrong'}, 500
+
+def get_users_request():
+    db = MongoDB()
+    connection_is_alive = db.test_connection()
+    if connection_is_alive:
+        documents = db.get_all()
+        if(documents):
+            docs = [doc for doc in documents]
+            json_docs = json.dumps(docs,default=json_util.default)
+            return json_docs, 200
 
     db.close_connection()
 
