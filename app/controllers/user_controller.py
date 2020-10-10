@@ -80,6 +80,7 @@ def update_user_request(id, request):
 
     return {'error': 'Something gone wrong'}, 500
 
+
 def get_users_request():
     db = MongoDB()
     connection_is_alive = db.test_connection()
@@ -87,7 +88,7 @@ def get_users_request():
         documents = db.get_all()
         if(documents):
             docs = [doc for doc in documents]
-            json_docs = json.dumps(docs,default=json_util.default)
+            json_docs = json.dumps(docs, default=json_util.default)
             return json_docs, 200
 
     db.close_connection()
