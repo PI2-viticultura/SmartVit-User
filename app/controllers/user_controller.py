@@ -69,6 +69,11 @@ def update_user_request(id, request):
     user_id = ObjectId(id)
 
     db = MongoDB()
+
+    keyWord = request['password'].encode("utf-8")
+    hashed = bcrypt.hashpw(keyWord, bcrypt.gensalt())
+    request['password'] = hashed
+    
     connection_is_alive = db.test_connection()
 
     if connection_is_alive:
