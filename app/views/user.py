@@ -22,3 +22,7 @@ def user_put(id):
 def user_get():
     if request.method == "GET":
         return controller.get_users_request()
+
+@app.route("/users/<string:user_id>", methods=["PATCH"])
+def user_update_status(user_id):
+    return controller.change_status(user_id)

@@ -99,3 +99,25 @@ def get_users_request():
     db.close_connection()
 
     return {'error': 'Something gone wrong'}, 500
+
+
+def change_status(user_id):
+    id_transformed = ObjectId(user_id)
+    db = MongoDB()
+
+    connection_is_alive = db.test_connection()
+    if connection_is_alive:
+        user = db.get_one(id_transformed, 'user')
+
+        if user:
+            if (user['situation'] == 1):
+                user['situation'] = 0
+            else:
+                user['situation'] = 1
+
+        retorno = db.update_one(id_transformed, user)
+
+        if retorno:
+            return {'message': 'Success'}, 200
+
+    return {'message': 'Something gone wrong'}, 500
