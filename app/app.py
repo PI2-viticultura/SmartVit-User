@@ -1,9 +1,14 @@
 from flask import Flask
 from flask_cors import CORS
 from views.user import app as user
+from views.login import app as login
+from flask_jwt_extended import JWTManager
 
 app = Flask(__name__)
+jwt = JWTManager(app)
+app.config["JWT_SECRET_KEY"] = "this-is-secret-key"
 app.register_blueprint(user)
+app.register_blueprint(login)
 CORS(app, automatic_options=True)
 
 

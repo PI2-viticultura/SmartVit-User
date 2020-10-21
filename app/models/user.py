@@ -1,5 +1,8 @@
 from settings import load_database_params
 import pymongo
+import datetime
+import jwt
+import os
 
 
 class MongoDB():
@@ -63,10 +66,29 @@ class MongoDB():
 
     def get_one(self, identifier, collection='user'):
         collection = self.get_collection(collection)
-        document = collection.find_one({"_id": identifier})
+        document = collection.find_one(
+            {
+                "email": identifier.email,
+                "password": identifier.password
+            }
+        )
         return document
 
     def get_all(self, collection='user'):
         collection = self.get_collection(collection)
         documents = collection.find()
         return documents
+
+    def encode_auth_token(self, user, user_id):
+        try:
+            payload = {
+                'exp': datetime.datetime.utcnow() +
+                datetime.timedelta(days=0, seconds=5),
+                'iat': datetime.datetime.utcnow(),
+                'sub': user_id
+                }
+            return jwt.encode(
+                payload, os.getenv('SECRET_KEY'), algorithm='HS256'
+            )
+        except Exception as e:
+            return e
