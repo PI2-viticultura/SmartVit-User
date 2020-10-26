@@ -3,7 +3,8 @@ import pymongo
 import datetime
 import jwt
 import os
-
+import bcrypt
+import sys
 
 class MongoDB():
     def __init__(self):
@@ -64,15 +65,17 @@ class MongoDB():
         except Exception as err:
             print(f'Erro ao deletar no banco de dados: {err}')
 
-    def get_one(self, identifier, collection='user'):
+    def get_one(self, email, password, collection='user'):
         collection = self.get_collection(collection)
-        document = collection.find_one(
-            {
-                "email": identifier.email,
-                "password": identifier.password
-            }
-        )
-        return document
+        document = collection.find_one({"email": email})
+        password_doc = document['password']
+        password = str(password).encode("utf-8")
+        if not document:
+            return False
+        else:
+            if bcrypt.checkpw(password, password_doc):
+                print("Password match!")
+                return True            
 
     def get_all(self, collection='user'):
         collection = self.get_collection(collection)

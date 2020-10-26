@@ -14,6 +14,7 @@ def user():
 
 
 @app.route("/user/<string:id>", methods=["PUT"])
+@jwt_required
 def user_put(id):
     if request.method == "PUT":
         return controller.update_user_request(id, request.json)

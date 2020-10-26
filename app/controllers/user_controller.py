@@ -70,8 +70,8 @@ def update_user_request(id, request):
 
     db = MongoDB()
 
-    keyWord = request['password'].encode("utf-8")
-    hashed = bcrypt.hashpw(keyWord, bcrypt.gensalt())
+    key_word = request['password'].encode("utf-8")
+    hashed = bcrypt.hashpw(key_word, bcrypt.gensalt())
     request['password'] = hashed
 
     connection_is_alive = db.test_connection()

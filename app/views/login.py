@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from flask_cors import CORS
-import controllers.login as controller
+import controllers.login_controller as controller
 
 
 app = Blueprint('login', __name__)
