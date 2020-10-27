@@ -5,6 +5,7 @@ from utils.validators_user import (
     validate_email, validate_password
 )
 
+
 def login_request(request):
 
     if request:
@@ -30,4 +31,3 @@ def login_request(request):
         ), 201
     else:
         return jsonify(message="Bad Email or Password"), 401
-

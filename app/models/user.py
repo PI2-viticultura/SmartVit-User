@@ -5,7 +5,7 @@ import datetime
 import jwt
 import os
 import bcrypt
-import sys
+
 
 class MongoDB():
     def __init__(self):
@@ -80,7 +80,7 @@ class MongoDB():
         else:
             if bcrypt.checkpw(password, password_doc):
                 print("Password match!")
-                return True            
+                return True
 
     def get_all(self, collection='user'):
         collection = self.get_collection(collection)
