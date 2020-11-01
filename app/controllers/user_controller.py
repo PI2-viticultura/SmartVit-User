@@ -6,6 +6,7 @@ from utils.validators_user import (
 from bson import ObjectId, json_util
 import json
 import bcrypt
+import requests
 
 
 def save_user_request(request):
@@ -102,22 +103,39 @@ def get_users_request():
 
 
 def change_status(user_id):
+    notification_api = ("https://smartvit-notification-dev.herokuapp.com/" +
+                        "user-notification")
+    data = dict()
     id_transformed = ObjectId(user_id)
     db = MongoDB()
+    active_user = ("Sua conta na SmartVit foi ativada e você já pode começar" +
+                   "a usar nosso sistema!")
 
     connection_is_alive = db.test_connection()
     if connection_is_alive:
+
         user = db.get_one(id_transformed, 'user')
 
         if user:
-            if (user['situation'] == 1):
+            if 'situation' not in user.keys():
+                user['situation'] = 1
+            elif (user['situation'] == 1):
+                active_user = "Sua conta na SmartVit foi desativada!"
                 user['situation'] = 0
             else:
                 user['situation'] = 1
 
-        retorno = db.update_one(id_transformed, user)
+            retorno = db.update_one(id_transformed, user)
 
-        if retorno:
-            return {'message': 'Success'}, 200
+            data['type'] = 'user'
+            data['title'] = "Conta"
+            data['message'] = active_user
+            data['users_ids'] = [str(user['_id'])]
+            data['emails'] = [user['email']]
+
+            requests.post(notification_api, json=data)
+
+            if retorno:
+                return {'message': 'Success'}, 200
 
     return {'message': 'Something gone wrong'}, 500
