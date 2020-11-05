@@ -21,7 +21,6 @@ def user_put(id):
 
 
 @app.route("/user", methods=["GET"])
-@jwt_required
 def user_get():
     if request.method == "GET":
         return controller.get_users_request()
@@ -30,3 +29,7 @@ def user_get():
 @app.route("/users/<string:user_id>", methods=["PATCH"])
 def user_update_status(user_id):
     return controller.change_status(user_id)
+
+@app.route("/login", methods=["GET"])
+def user_login():
+    return controller.get_user_login(request.json)

@@ -79,8 +79,7 @@ class MongoDB():
             return False
         else:
             if bcrypt.checkpw(password, password_doc):
-                print("Password match!")
-                return True
+                return document
 
     def get_all(self, collection='user'):
         collection = self.get_collection(collection)
