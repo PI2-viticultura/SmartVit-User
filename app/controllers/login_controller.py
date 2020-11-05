@@ -4,6 +4,8 @@ from flask_jwt_extended import create_access_token
 from utils.validators_user import (
     validate_email, validate_password
 )
+from bson import json_util
+import json
 
 
 def login_request(request):
@@ -31,3 +33,20 @@ def login_request(request):
         ), 201
     else:
         return jsonify(message="Bad Email or Password"), 401
+
+
+def get_user_login(request):
+    if not validate_email(request):
+        return {"erro": "Não é possível enviar email vazio"}, 400
+    if not validate_password(request):
+        return {"erro": "Não é possível enviar senha vazio"}, 400
+    db = MongoDB()
+    connection_is_alive = db.test_connection()
+    if connection_is_alive:
+        has_user = db.get_one(request['email'], request['password'])
+        if has_user:
+            has_user.pop('password')
+            json_docs = json.dumps(has_user, default=json_util.default)
+            return json_docs, 201
+        else:
+            return {'message': 'Sem usuário'}, 400
