@@ -49,4 +49,4 @@ def get_user_login(request):
             json_docs = json.dumps(has_user, default=json_util.default)
             return json_docs, 201
         else:
-            return {'message': 'Sem usuário'}, 400
+            return {'message': 'Unauthorized'}, 401
