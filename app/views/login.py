@@ -9,4 +9,4 @@ CORS(app)
 
 @app.route("/login", methods=["POST"])
 def user_login():
-    return controller.get_user_login(request.json)
+    return controller.login_request(request.json)
