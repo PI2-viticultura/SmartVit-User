@@ -7,6 +7,6 @@ app = Blueprint('login', __name__)
 CORS(app)
 
 
-@app.route("/login", methods=["GET"])
+@app.route("/login", methods=["POST"])
 def user_login():
     return controller.get_user_login(request.json)
