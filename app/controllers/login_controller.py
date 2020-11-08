@@ -13,6 +13,7 @@ def login_request(request):
     if request:
         email = request["email"]
         password = request["password"]
+        role = request["role"]
 
     if not validate_email(request):
         return {"erro": "Não é possível enviar email vazio"}, 400
@@ -24,7 +25,10 @@ def login_request(request):
 
     connection_is_alive = db.test_connection()
     if connection_is_alive:
-        has_user = db.get_one(email, password)
+        if role == "admin":
+            has_user = db.get_one_admin(email, password)
+        else:
+            has_user = db.get_one(email, password)
     if has_user:
         access_token = create_access_token(identity=email)
         return jsonify(

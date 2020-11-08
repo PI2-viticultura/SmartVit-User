@@ -81,6 +81,16 @@ class MongoDB():
             if bcrypt.checkpw(password, password_doc):
                 return document
 
+    def get_one_admin(self, email, password, collection='user'):
+        collection = self.get_collection(collection)
+        document = collection.find_one({"email": email, "role": "admin"})
+        password = str(password).encode("utf-8")
+        if not document:
+            return False
+        else:
+            if bcrypt.checkpw(password, password_doc):
+                return document
+
     def get_all(self, collection='user'):
         collection = self.get_collection(collection)
         documents = collection.find()
