@@ -16,4 +16,5 @@ pytest==6.0.2
 flake8
 coverage
 flask_jwt_extended
+behave==1.2.6
 gunicorn
