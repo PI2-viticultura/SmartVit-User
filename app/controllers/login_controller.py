@@ -27,8 +27,10 @@ def login_request(request):
     if connection_is_alive:
         if role == "admin":
             has_user = db.get_one_admin(email, password)
-        else:
+        elif role == "user":
             has_user = db.get_one(email, password)
+        elif not role:
+            return jsonify(message="Usuário não encontrado"), 404
     if has_user:
         access_token = create_access_token(identity=email)
         return jsonify(

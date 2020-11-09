@@ -72,24 +72,25 @@ class MongoDB():
 
     def get_one(self, email, password, collection='user'):
         collection = self.get_collection(collection)
-        document = collection.find_one({"email": email})
-        password_doc = document['password']
-        password = str(password).encode("utf-8")
-        if not document:
-            return False
-        else:
+        document = collection.find_one({"email": email, "role": "user"})
+        if not (document is None):
+            password_doc = document['password']
+            password = str(password).encode("utf-8")
             if bcrypt.checkpw(password, password_doc):
                 return document
+        else:
+            return False
 
     def get_one_admin(self, email, password, collection='user'):
         collection = self.get_collection(collection)
         document = collection.find_one({"email": email, "role": "admin"})
-        password = str(password).encode("utf-8")
-        if not document:
-            return False
-        else:
+        if not (document is None):
+            password_doc = document['password']
+            password = str(password).encode("utf-8")
             if bcrypt.checkpw(password, password_doc):
                 return document
+        else:
+            return False
 
     def get_all(self, collection='user'):
         collection = self.get_collection(collection)
@@ -103,7 +104,7 @@ class MongoDB():
                 datetime.timedelta(days=0, seconds=5),
                 'iat': datetime.datetime.utcnow(),
                 'sub': user_id
-                }
+            }
             return jwt.encode(
                 payload, os.getenv('SECRET_KEY'), algorithm='HS256'
             )
