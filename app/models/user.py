@@ -1,7 +1,10 @@
 from settings import load_database_params
 from extensions import client
 import pymongo
+import datetime
+import jwt
 import os
+import bcrypt
 
 
 class MongoDB():
@@ -67,12 +70,43 @@ class MongoDB():
         except Exception as err:
             print(f'Erro ao deletar no banco de dados: {err}')
 
-    def get_one(self, identifier, collection='user'):
+    def get_one(self, email, password, collection='user'):
         collection = self.get_collection(collection)
-        document = collection.find_one({"_id": identifier})
-        return document
+        document = collection.find_one({"email": email, "role": "user"})
+        if not (document is None):
+            password_doc = document['password']
+            password = str(password).encode("utf-8")
+            if bcrypt.checkpw(password, password_doc):
+                return document
+        else:
+            return False
+
+    def get_one_admin(self, email, password, collection='user'):
+        collection = self.get_collection(collection)
+        document = collection.find_one({"email": email, "role": "admin"})
+        if not (document is None):
+            password_doc = document['password']
+            password = str(password).encode("utf-8")
+            if bcrypt.checkpw(password, password_doc):
+                return document
+        else:
+            return False
 
     def get_all(self, collection='user'):
         collection = self.get_collection(collection)
         documents = collection.find()
         return documents
+
+    def encode_auth_token(self, user, user_id):
+        try:
+            payload = {
+                'exp': datetime.datetime.utcnow() +
+                datetime.timedelta(days=0, seconds=5),
+                'iat': datetime.datetime.utcnow(),
+                'sub': user_id
+            }
+            return jwt.encode(
+                payload, os.getenv('SECRET_KEY'), algorithm='HS256'
+            )
+        except Exception as e:
+            return e
