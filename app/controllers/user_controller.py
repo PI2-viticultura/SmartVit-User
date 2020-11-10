@@ -6,6 +6,7 @@ from utils.validators_user import (
 from bson import ObjectId, json_util
 import json
 import bcrypt
+import requests
 
 
 def save_user_request(request):
@@ -70,8 +71,8 @@ def update_user_request(id, request):
 
     db = MongoDB()
 
-    keyWord = request['password'].encode("utf-8")
-    hashed = bcrypt.hashpw(keyWord, bcrypt.gensalt())
+    key_word = request['password'].encode("utf-8")
+    hashed = bcrypt.hashpw(key_word, bcrypt.gensalt())
     request['password'] = hashed
 
     connection_is_alive = db.test_connection()
@@ -99,3 +100,59 @@ def get_users_request():
     db.close_connection()
 
     return {'error': 'Something gone wrong'}, 500
+
+
+def change_status(user_id):
+    notification_api = ("https://smartvit-notification-dev.herokuapp.com/" +
+                        "user-notification")
+    data = dict()
+    id_transformed = ObjectId(user_id)
+    db = MongoDB()
+    active_user = ("Sua conta na SmartVit foi ativada e você já pode começar" +
+                   "a usar nosso sistema!")
+
+    connection_is_alive = db.test_connection()
+    if connection_is_alive:
+
+        user = db.get_one(id_transformed, 'user')
+
+        if user:
+            if 'situation' not in user.keys():
+                user['situation'] = 1
+            elif (user['situation'] == 1):
+                active_user = "Sua conta na SmartVit foi desativada!"
+                user['situation'] = 0
+            else:
+                user['situation'] = 1
+
+            retorno = db.update_one(id_transformed, user)
+
+            data['type'] = 'user'
+            data['title'] = "Conta"
+            data['message'] = active_user
+            data['users_ids'] = [str(user['_id'])]
+            data['emails'] = [user['email']]
+
+            requests.post(notification_api, json=data)
+
+            if retorno:
+                return {'message': 'Success'}, 200
+
+    return {'message': 'Something gone wrong'}, 500
+
+
+def get_user_login(request):
+    if not validate_email(request):
+        return {"erro": "Não é possível enviar email vazio"}, 400
+    if not validate_password(request):
+        return {"erro": "Não é possível enviar senha vazio"}, 400
+    db = MongoDB()
+    connection_is_alive = db.test_connection()
+    if connection_is_alive:
+        has_user = db.get_one(request['email'], request['password'])
+        if has_user:
+            has_user.pop('password')
+            json_docs = json.dumps(has_user, default=json_util.default)
+            return json_docs, 201
+        else:
+            return {'message': 'Sem usuário'}, 400
