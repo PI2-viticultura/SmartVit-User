@@ -1,16 +1,25 @@
 from behave import given, when, then
+import requests
 
+api_endpoints = {}
+request_headers = {}
+response_texts={}
+request_bodies = {}
+api_url=None
 
-@given('behave instalado')
+@given('a pagina de gerenciar usuarios')
 def step_impl_given(context):
-    pass
+    global api_url
+    api_url = 'https://smartvit-user-dev.herokuapp.com/user'
+    print('url :'+api_url)
 
-
-@when('implenta-se um teste')
+@when('ele visualizar os usuarios desejados')
 def step_impl_when(context):
-    assert True is not False
+    response = requests.get('https://smartvit-user-dev.herokuapp.com/user')
+    assert response.status_code == 200
 
 
-@then('behave conseguirá testar')
+@then('o bff requisita o microsservico desejado')
 def step_impl_then(context):
-    assert context.failed is False
+    response = requests.get('https://smartvit-admin-bff-dev.herokuapp.com/user/')
+    assert response.status_code == 200
