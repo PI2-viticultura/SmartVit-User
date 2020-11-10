@@ -1,10 +1,6 @@
 from behave import given, when, then
 import requests
 
-api_endpoints = {}
-request_headers = {}
-response_texts={}
-request_bodies = {}
 api_url=None
 
 @given('a pagina de gerenciar usuarios')
