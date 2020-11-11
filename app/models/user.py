@@ -36,9 +36,9 @@ class MongoDB():
         db = self.client[os.getenv("DBNAME", "smart-dev")]
         return db[collection]
 
-    def insert_one(self, body):
+    def insert_one(self, body, collection='user'):
         try:
-            collection = self.get_collection()
+            collection = self.get_collection(collection)
             return collection.insert_one(body)
         except Exception as err:
             print(f'Erro ao inserir no banco de dados: {err}')
@@ -110,3 +110,13 @@ class MongoDB():
             )
         except Exception as e:
             return e
+
+    def get_one_winery(self, identifier):
+        collection = self.get_collection('winery')
+        document = collection.find_one({"_id": identifier})
+        return document
+
+    def get_one_user(self, identifier):
+        collection = self.get_collection('user')
+        document = collection.find_one({"_id": identifier})
+        return document
