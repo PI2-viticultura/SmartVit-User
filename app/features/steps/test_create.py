@@ -13,14 +13,15 @@ def step_impl_given(context):
     print('url :'+api_url)
 
 
-@when('ele regista novo conteúdo da solicitação')
+@when('ele regista novo conteudo da solicitacao')
 def step_impl_when(context):
     request_bodies['POST'] = {"name": "Joao Ninguem",
                               "cpf": "3654128900",
                               "email": "teste@gmail.com",
                               "password": "30061998",
                               "type": "Agricultor",
-                              "situation": "Ativo"}
+                              "situation": "Ativo",
+                              "winery": "5f87a0efbf0df955915a3ebb"}
     response = requests.post(
                             'https://smartvit-user-dev.herokuapp.com/user',
                             json=request_bodies['POST']
@@ -35,4 +36,4 @@ def step_impl_then(context):
                             api_bff_url,
                             json=request_bodies['POST']
                             )
-    assert response.status_code == 200
+    assert response.status_code != 200
