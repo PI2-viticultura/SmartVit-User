@@ -20,7 +20,7 @@ def step_impl_when(context):
 
 @then('o bff requisita o microsservico desejado')
 def step_impl_then(context):
-    global bff_url 
+    global bff_url
     bff_url = 'https://smartvit-admin-bff-dev.herokuapp.com/user/'
     response = requests.get(bff_url)
     assert response.status_code == 200

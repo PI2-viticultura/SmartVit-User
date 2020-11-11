@@ -8,4 +8,8 @@ Feature: criar requisicao e enviar ao microsservico user atraves do BFF
     Scenario: Administrador cadastra os usuarios na aplicacao
         Given a pagina de criar novo usuario
         When ele regista novo conteúdo da solicitação
+        | name         | cpf        | email           | password | type       | situation |
+        | Joao Ninguem | 3654128900 | teste@gmail.com | 30061998 | Agricultor | Ativo     |
         Then o bff requisita o microsservico para criar informacao
+        | name         | cpf        | email           | password | type       | situation |
+        | Joao Ninguem | 3654128900 | teste@gmail.com | 30061998 | Agricultor | Ativo     |
