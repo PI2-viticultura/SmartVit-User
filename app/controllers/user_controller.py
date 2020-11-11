@@ -1,7 +1,8 @@
 from models.user import MongoDB
 from utils.validators_user import (
     validate_name, validate_cpf, validate_email, validate_password,
-    validate_type, validate_situation, validate_fields
+    validate_type, validate_situation, validate_fields,
+    validate_winery
 )
 from bson import ObjectId, json_util
 import json
@@ -29,6 +30,8 @@ def save_user_request(request):
         return {"erro": "Não é possível enviar tipo vazio"}, 400
     if not validate_situation(request):
         return {"erro": "Não é possível enviar situação vazio"}, 400
+    if not validate_winery(request):
+        return {"erro": "Não é possível enviar vinícola vazio"}, 400
 
     db = MongoDB()
 
@@ -38,8 +41,26 @@ def save_user_request(request):
 
     connection_is_alive = db.test_connection()
     if connection_is_alive:
-        if(db.insert_one(request)):
-            return {"message": "Sucess"}, 200
+        winery_id = ObjectId(request['winery'])
+        winery = db.get_one_winery(winery_id)
+        if not winery:
+            return {'error': 'winery not found'}, 404
+
+        user = db.insert_one(request)
+        if user:
+            user = db.get_one_user(user.inserted_id)
+
+        if(user):
+            if 'responsibles' not in winery.keys():
+                winery['responsibles'] = []
+
+            elif not winery['responsibles']:
+                winery['responsibles'] = []
+
+            winery['responsibles'].append(user)
+
+            if(db.update_one(winery_id, winery, 'winery')):
+                return {"message": "Sucess"}, 200
 
     db.close_connection()
 
@@ -66,6 +87,8 @@ def update_user_request(id, request):
         return {"erro": "Não é possível enviar tipo vazio"}, 400
     if not validate_situation(request):
         return {"erro": "Não é possível enviar situação vazio"}, 400
+    if not validate_winery(request):
+        return {"erro": "Não é possível enviar vinícola vazio"}, 400
 
     user_id = ObjectId(id)
 
@@ -78,9 +101,8 @@ def update_user_request(id, request):
     connection_is_alive = db.test_connection()
 
     if connection_is_alive:
-        if(db.update_one(user_id, request)):
-            if(db.update_one(user_id, request, 'user')):
-                return {"message": "success"}, 200
+        if(db.update_one(user_id, request, 'user')):
+            return {"message": "success"}, 200
 
     db.close_connection()
 

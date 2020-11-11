@@ -35,7 +35,8 @@ def login_request(request):
         access_token = create_access_token(identity=email)
         return jsonify(
             message="Login Succeeded!",
-            access_token=access_token
+            access_token=access_token,
+            user=str(has_user["_id"])
         ), 201
     else:
         return jsonify(message="Bad Email or Password"), 401

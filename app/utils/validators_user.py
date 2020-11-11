@@ -1,5 +1,6 @@
 def validate_fields(request):
-    fields = ['name', 'cpf', 'email', 'password', 'type', 'situation']
+    fields = [
+        'name', 'cpf', 'email', 'password', 'type', 'situation', 'winery']
     return all(field in request.keys() for field in fields)
 
 
@@ -25,3 +26,7 @@ def validate_type(request):
 
 def validate_situation(request):
     return request["situation"]
+
+
+def validate_winery(request):
+    return request["winery"]
