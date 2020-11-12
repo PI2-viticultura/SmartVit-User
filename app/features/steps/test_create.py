@@ -9,7 +9,7 @@ api_url = None
 @given('a pagina de criar novo usuario')
 def step_impl_given(context):
     global api_url
-    api_url = 'https://smartvit-user-dev.herokuapp.com/user'
+    api_url = 'https://smartvit-user-stg.herokuapp.com/user'
     print('url :'+api_url)
 
 
@@ -23,7 +23,7 @@ def step_impl_when(context):
                               "situation": "Ativo",
                               "winery": "5f87a0efbf0df955915a3ebb"}
     response = requests.post(
-                            'https://smartvit-user-dev.herokuapp.com/user',
+                            api_url,
                             json=request_bodies['POST']
                             )
     assert response.status_code == 200
@@ -31,7 +31,7 @@ def step_impl_when(context):
 
 @then('o bff requisita o microsservico para criar informacao')
 def step_impl_then(context):
-    api_bff_url = 'https://smartvit-admin-bff-dev.herokuapp.com/user/'
+    api_bff_url = 'https://smartvit-admin-bff-stg.herokuapp.com/user/'
     response = requests.post(
                             api_bff_url,
                             json=request_bodies['POST']
