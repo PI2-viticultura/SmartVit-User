@@ -21,7 +21,7 @@ def step_impl_when(context):
                               "password": "30061998",
                               "type": "Agricultor",
                               "situation": "Ativo",
-                              "winery": "5f87a0efbf0df955915a3ebb"}
+                              "winery": "5fad331b38b2670687db57e2"}
     response = requests.post(
                             api_url,
                             json=request_bodies['POST']
@@ -31,7 +31,7 @@ def step_impl_when(context):
 
 @then('o bff requisita o microsservico para criar informacao')
 def step_impl_then(context):
-    api_bff_url = 'https://smartvit-admin-bff-stg.herokuapp.com/user/'
+    api_bff_url = 'https://smartvit-admin-bff-stg.herokuapp.com/user'
     response = requests.post(
                             api_bff_url,
                             json=request_bodies['POST']
