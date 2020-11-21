@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from flask_cors import CORS
 import controllers.user_controller as controller
-from flask_jwt_extended import jwt_required
+
 
 app = Blueprint('user', __name__)
 CORS(app)
@@ -14,7 +14,6 @@ def user():
 
 
 @app.route("/user/<string:id>", methods=["PUT"])
-@jwt_required
 def user_put(id):
     if request.method == "PUT":
         return controller.update_user_request(id, request.json)
